@@ -1,0 +1,14 @@
+{
+  "watch": ["src"],
+  "ext": "js,json,env",
+  "ignore": ["src/**/*.test.js", "src/**/*.spec.js"],
+  "exec": "node src/server.js",
+  "verbose": true,
+  "events": {
+    "restart": "clear && echo '\n🔄 Backend restarted due to changes'"
+  },
+  "delay": "250",
+  "env": {
+    "NODE_ENV": "development"
+  }
+} 

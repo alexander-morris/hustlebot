@@ -26,3 +26,4 @@ The backend of the app is a Node.js server that is built with Express.
 
 The app provides a chat interface as a wrapper over the Google Gemini API. 
 
+# hustlebot

@@ -1,0 +1,60 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "text": "What are your main goals and aspirations?",
+      "category": "goals",
+      "followUp": "How do you plan to achieve these goals?",
+      "options": [
+        "Career growth and professional development",
+        "Personal growth and life balance"
+      ]
+    },
+    {
+      "id": "q2", 
+      "text": "What skills do you want to develop?",
+      "category": "skills",
+      "followUp": "Which of these skills would have the biggest impact?",
+      "options": [
+        "Technical and professional skills",
+        "Soft skills and leadership"
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "What's holding you back from pursuing your dreams?",
+      "category": "obstacles",
+      "followUp": "How can we overcome these obstacles?",
+      "options": [
+        "Fear of failure or uncertainty",
+        "Lack of resources or support"
+      ]
+    },
+    {
+      "id": "q4",
+      "text": "What does success look like to you?",
+      "category": "vision",
+      "followUp": "What steps can you take today towards that vision?",
+      "options": [
+        "Financial independence and stability",
+        "Work-life balance and fulfillment"
+      ]
+    },
+    {
+      "id": "q5",
+      "text": "Who inspires you and why?",
+      "category": "motivation",
+      "followUp": "What qualities do they have that you'd like to develop?",
+      "options": [
+        "Industry leaders and innovators",
+        "Personal mentors and role models"
+      ]
+    },
+    {
+      "id": "q6",
+      "text": "What's one thing you'd do if you knew you couldn't fail?",
+      "category": "fears",
+      "followUp": "What's stopping you from trying anyway?"
+    }
+  ]
+} 
