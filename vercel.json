@@ -1,35 +1,69 @@
 {
   "version": 2,
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "frontend/build",
   "builds": [
     {
-      "src": "frontend/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
+      "config": { 
+        "distDir": "frontend/build",
+        "maxLambdaSize": "10mb"
+      }
+    },
+    {
+      "src": "backend/src/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "10mb"
+      }
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "backend/src/index.js"
+    },
+    {
       "src": "/static/(.*)",
-      "dest": "/frontend/static/$1"
+      "dest": "/frontend/static/$1",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
     },
     {
       "src": "/favicon.ico",
-      "dest": "/frontend/favicon.ico"
+      "dest": "/frontend/favicon.ico",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
     },
     {
       "src": "/manifest.json",
-      "dest": "/frontend/manifest.json"
+      "dest": "/frontend/manifest.json",
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate"
+      }
     },
     {
       "src": "/service-worker.js",
       "dest": "/frontend/service-worker.js",
       "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
         "Service-Worker-Allowed": "/"
       }
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/index.html"
+      "dest": "/frontend/index.html",
+      "headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "1; mode=block",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()"
+      }
     }
   ],
   "env": {
@@ -38,6 +72,14 @@
     "REACT_APP_FIREBASE_PROJECT_ID": "@firebase-project-id",
     "REACT_APP_FIREBASE_STORAGE_BUCKET": "@firebase-storage-bucket",
     "REACT_APP_FIREBASE_MESSAGING_SENDER_ID": "@firebase-messaging-sender-id",
-    "REACT_APP_FIREBASE_APP_ID": "@firebase-app-id"
+    "REACT_APP_FIREBASE_APP_ID": "@firebase-app-id",
+    "FIREBASE_PRIVATE_KEY": "@firebase-private-key",
+    "FIREBASE_CLIENT_EMAIL": "@firebase-client-email",
+    "NODE_ENV": "production"
+  },
+  "regions": ["sfo1"],
+  "github": {
+    "silent": true,
+    "autoAlias": true
   }
 } 
