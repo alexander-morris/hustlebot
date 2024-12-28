@@ -8,17 +8,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build": "expo export:web",
-    "vercel-build": "expo export:web",
-    "prestart": "node scripts/check-env.js",
-    "prebuild": "node scripts/check-env.js",
-    "postinstall": "node scripts/setup.js",
-    "prod": "NODE_ENV=production expo start --web",
-    "prod:build": "NODE_ENV=production expo export:web",
-    "analyze": "source-map-explorer 'web-build/static/js/*.js'",
-    "lint": "eslint . --ext .js,.jsx",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "eslint . --ext .js,.jsx"
   },
   "dependencies": {
     "@expo/webpack-config": "^18.1.3",

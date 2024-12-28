@@ -1,69 +1,30 @@
 {
   "version": 2,
-  "buildCommand": "npm run vercel-build",
-  "outputDirectory": "frontend/build",
   "builds": [
     {
-      "src": "package.json",
+      "src": "frontend/package.json",
       "use": "@vercel/static-build",
-      "config": { 
-        "distDir": "frontend/build",
-        "maxLambdaSize": "10mb"
+      "config": {
+        "distDir": "build",
+        "buildCommand": "cd .. && npm install && npm run vercel-build"
       }
     },
     {
       "src": "backend/src/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxLambdaSize": "10mb"
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/src/index.js"
+      "dest": "/backend/src/index.js"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "/frontend/static/$1",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "/frontend/favicon.ico",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "/frontend/manifest.json",
-      "headers": {
-        "cache-control": "public, max-age=0, must-revalidate"
-      }
-    },
-    {
-      "src": "/service-worker.js",
-      "dest": "/frontend/service-worker.js",
-      "headers": {
-        "cache-control": "public, max-age=0, must-revalidate",
-        "Service-Worker-Allowed": "/"
-      }
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/index.html",
-      "headers": {
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff",
-        "x-xss-protection": "1; mode=block",
-        "strict-transport-security": "max-age=31536000; includeSubDomains",
-        "referrer-policy": "strict-origin-when-cross-origin",
-        "permissions-policy": "camera=(), microphone=(), geolocation=()"
-      }
+      "dest": "/frontend/index.html"
     }
   ],
   "env": {
@@ -76,10 +37,5 @@
     "FIREBASE_PRIVATE_KEY": "@firebase-private-key",
     "FIREBASE_CLIENT_EMAIL": "@firebase-client-email",
     "NODE_ENV": "production"
-  },
-  "regions": ["sfo1"],
-  "github": {
-    "silent": true,
-    "autoAlias": true
   }
 } 
