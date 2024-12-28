@@ -1,0 +1,278 @@
+{
+    "categories": {
+      "financial_literacy": {
+        "questions": [
+          {
+            "id": "flq1",
+            "question": "What are your current financial goals?",
+            "type": "open-ended",
+            "follow_up": "flq2"
+          },
+          {
+            "id": "flq2",
+            "question": "Do you have any experience with credit building?",
+            "type": "yes-no",
+            "follow_up_yes": "flq3",
+            "follow_up_no": "flq4"
+          },
+          {
+            "id": "flq3",
+            "question": "Great! What strategies have you used to build your credit?",
+            "type": "open-ended",
+            "follow_up": "flq5"
+          },
+          {
+            "id": "flq4",
+            "question": "No worries! Would you like some tips on how to start building your credit?",
+            "type": "yes-no",
+            "follow_up_yes": "flq5",
+            "follow_up_no": "flq6"
+          },
+          {
+            "id": "flq5",
+            "question": "Would you like to access our financial literacy resources?",
+            "type": "yes-no",
+            "follow_up_yes": "flq7",
+            "follow_up_no": "flq6"
+          },
+          {
+            "id": "flq6",
+            "question": "Is there anything else you'd like to learn about financial management?",
+            "type": "open-ended",
+            "follow_up": "end"
+          },
+          {
+            "id": "flq7",
+            "question": "Here are some resources to help you build your credit: [List of Resources]. Would you like to set up a reminder to review these resources weekly?",
+            "type": "yes-no",
+            "follow_up_yes": "flq8",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "flq8",
+            "question": "Great! We'll send you weekly reminders to review your financial literacy resources. Is there a specific time you'd prefer to receive these reminders?",
+            "type": "multiple-choice",
+            "options": ["Morning", "Afternoon", "Evening"],
+            "follow_up": "end"
+          }
+        ]
+      },
+      "entrepreneurship": {
+        "questions": [
+          {
+            "id": "eq1",
+            "question": "Have you ever started a business before?",
+            "type": "yes-no",
+            "follow_up_yes": "eq2",
+            "follow_up_no": "eq3"
+          },
+          {
+            "id": "eq2",
+            "question": "That's impressive! What type of business did you start?",
+            "type": "open-ended",
+            "follow_up": "eq4"
+          },
+          {
+            "id": "eq3",
+            "question": "No problem! What type of business are you interested in starting?",
+            "type": "open-ended",
+            "follow_up": "eq4"
+          },
+          {
+            "id": "eq4",
+            "question": "What resources do you currently have that could support your business?",
+            "type": "multiple-choice",
+            "options": ["Capital", "Skills", "Network", "None"],
+            "follow_up": "eq5"
+          },
+          {
+            "id": "eq5",
+            "question": "Would you like to access our entrepreneurship guides and tools?",
+            "type": "yes-no",
+            "follow_up_yes": "eq6",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "eq6",
+            "question": "Here are some resources to help you start your business: [List of Resources]. Would you like to set up a consultation with one of our mentors?",
+            "type": "yes-no",
+            "follow_up_yes": "eq7",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "eq7",
+            "question": "Please provide your preferred contact method for the consultation.",
+            "type": "open-ended",
+            "follow_up": "end"
+          }
+        ]
+      },
+      "personal_development": {
+        "questions": [
+          {
+            "id": "pdq1",
+            "question": "What activities do you enjoy doing in your free time?",
+            "type": "open-ended",
+            "follow_up": "pdq2"
+          },
+          {
+            "id": "pdq2",
+            "question": "What skills or talents do you feel most confident in?",
+            "type": "open-ended",
+            "follow_up": "pdq3"
+          },
+          {
+            "id": "pdq3",
+            "question": "Would you like to set personal growth goals with our assistance?",
+            "type": "yes-no",
+            "follow_up_yes": "pdq4",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "pdq4",
+            "question": "Let's start by identifying one personal growth goal. What would you like to achieve?",
+            "type": "open-ended",
+            "follow_up": "end"
+          }
+        ]
+      },
+      "e_commerce": {
+        "questions": [
+          {
+            "id": "ecq1",
+            "question": "Are you interested in selling products online?",
+            "type": "yes-no",
+            "follow_up_yes": "ecq2",
+            "follow_up_no": "ecq3"
+          },
+          {
+            "id": "ecq2",
+            "question": "What type of products are you interested in selling?",
+            "type": "multiple-choice",
+            "options": ["Physical Goods", "Digital Products", "Services", "Other"],
+            "follow_up": "ecq4"
+          },
+          {
+            "id": "ecq3",
+            "question": "Would you like to explore opportunities to monetize your passions instead?",
+            "type": "yes-no",
+            "follow_up_yes": "ecq4",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "ecq4",
+            "question": "Do you have any experience with e-commerce platforms like eBay or Shopify?",
+            "type": "yes-no",
+            "follow_up_yes": "ecq5",
+            "follow_up_no": "ecq6"
+          },
+          {
+            "id": "ecq5",
+            "question": "Great! Would you like tips on optimizing your existing e-commerce listings?",
+            "type": "yes-no",
+            "follow_up_yes": "ecq7",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "ecq6",
+            "question": "No worries! Would you like to receive a beginner's guide to starting an online store?",
+            "type": "yes-no",
+            "follow_up_yes": "ecq7",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "ecq7",
+            "question": "Here are some resources to help you get started with e-commerce: [List of Resources]. Would you like to set up a storefront with our assistance?",
+            "type": "yes-no",
+            "follow_up_yes": "ecq8",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "ecq8",
+            "question": "Please provide your preferred platform for setting up your storefront (e.g., Shopify, eBay, Etsy).",
+            "type": "multiple-choice",
+            "options": ["Shopify", "eBay", "Etsy", "Other"],
+            "follow_up": "end"
+          }
+        ]
+      },
+      "community_building": {
+        "questions": [
+          {
+            "id": "cbq1",
+            "question": "Are you interested in connecting with mentors or advisors within the community?",
+            "type": "yes-no",
+            "follow_up_yes": "cbq2",
+            "follow_up_no": "cbq3"
+          },
+          {
+            "id": "cbq2",
+            "question": "What areas would you like mentorship in?",
+            "type": "multiple-choice",
+            "options": ["Financial Management", "Business Development", "Marketing", "Personal Growth", "Other"],
+            "follow_up": "cbq4"
+          },
+          {
+            "id": "cbq3",
+            "question": "Would you like to participate in community forums and discussions?",
+            "type": "yes-no",
+            "follow_up_yes": "cbq4",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "cbq4",
+            "question": "How often would you like to engage in community activities?",
+            "type": "multiple-choice",
+            "options": ["Daily", "Weekly", "Monthly", "Occasionally"],
+            "follow_up": "end"
+          }
+        ]
+      },
+      "technical_support": {
+        "questions": [
+          {
+            "id": "tsq1",
+            "question": "Do you need assistance with setting up your account or navigating the platform?",
+            "type": "yes-no",
+            "follow_up_yes": "tsq2",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "tsq2",
+            "question": "Please describe the issue you're experiencing:",
+            "type": "open-ended",
+            "follow_up": "tsq3"
+          },
+          {
+            "id": "tsq3",
+            "question": "Thank you for your input. Our support team will reach out to you shortly with a solution.",
+            "type": "info",
+            "follow_up": "end"
+          }
+        ]
+      },
+      "motivation_inspiration": {
+        "questions": [
+          {
+            "id": "miq1",
+            "question": "What inspires you to pursue financial independence and personal growth?",
+            "type": "open-ended",
+            "follow_up": "miq2"
+          },
+          {
+            "id": "miq2",
+            "question": "Would you like to receive motivational tips and success stories from our community?",
+            "type": "yes-no",
+            "follow_up_yes": "miq3",
+            "follow_up_no": "end"
+          },
+          {
+            "id": "miq3",
+            "question": "Great! You'll receive regular updates to keep you motivated on your journey.",
+            "type": "info",
+            "follow_up": "end"
+          }
+        ]
+      }
+    }
+  }
