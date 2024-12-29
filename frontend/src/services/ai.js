@@ -1,5 +1,5 @@
 const isDev = process.env.NODE_ENV === 'development';
-const API_URL = 'http://localhost:3000/api';
+const API_URL = isDev ? 'http://localhost:3000/api' : '/api';
 
 export const sendMessage = async (message) => {
   try {
@@ -25,7 +25,7 @@ export const sendMessage = async (message) => {
 export const validateInvite = async (code) => {
   try {
     if (isDev) {
-      console.log('[DEV] Validating invite code:', code);
+      console.log('[DEV] Validating invite:', code);
     }
     
     const response = await fetch(`${API_URL}/invite/validate`, {
@@ -38,13 +38,16 @@ export const validateInvite = async (code) => {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('[DEV] Validation error:', errorData);
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    if (isDev) {
+      console.log('[DEV] Response status:', response.status);
     }
 
     const data = await response.json();
     if (isDev) {
-      console.log('[DEV] Validation response:', data);
+      console.log('[DEV] Response data:', data);
     }
     return data;
   } catch (error) {

@@ -6,6 +6,11 @@ import Navbar from '../../components/Navbar';
 import { getUrlParams } from '../../utils/urlUtils';
 import { logUserResponse } from '../../services/analytics';
 
+const WELCOME_MESSAGE = {
+  type: 'bot',
+  content: "Hi! I'm HustleBot, your AI companion for turning dreams into reality. I'm here to help you discover your passions, set meaningful goals, and take action towards achieving them. Let's start with a question to get to know you better."
+};
+
 // Daily questions and updates pool with specific responses
 const DAILY_QUESTIONS_WITH_RESPONSES = [
   {
@@ -162,6 +167,7 @@ export default function LandingPage() {
             waitForAnswer={true}
             questionsBeforeSignIn={5}
             onUserResponse={handleUserResponse}
+            welcomeMessage={WELCOME_MESSAGE}
           />
         </View>
       </View>
