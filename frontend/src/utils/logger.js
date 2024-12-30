@@ -1,5 +1,5 @@
 const isDev = process.env.NODE_ENV === 'development';
-const LOG_ENDPOINT = 'http://localhost:3000/api/logs';
+const LOG_ENDPOINT = 'http://localhost:4000/api/logs';
 
 class Logger {
   static logs = [];

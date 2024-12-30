@@ -118,7 +118,7 @@ export default function ChatUI({ questionsBeforeLogin, showRefOffer }) {
     // Check backend connection
     const checkConnection = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/health');
+        const response = await fetch('http://localhost:4000/api/health');
         if (!response.ok) throw new Error('Backend unavailable');
         setConnectionError(false);
       } catch (error) {

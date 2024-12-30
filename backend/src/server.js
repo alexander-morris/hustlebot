@@ -1,7 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const { mongoUri } = require('./config/env');
 require('dotenv').config();
 const logger = require('./utils/logger');
 
@@ -10,11 +8,6 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// MongoDB connection
-mongoose.connect(mongoUri)
-  .then(() => logger.success('MongoDB connected successfully'))
-  .catch(err => logger.error('MongoDB connection error:', err));
 
 // Routes
 app.use('/api/chat', require('./routes/chat'));
@@ -32,10 +25,9 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-const PORT = process.env.PORT || 3000;
-
-// Only start the server if this file is run directly
+// Only start the server if this file is run directly (not in serverless)
 if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
 }
 

@@ -1,5 +1,5 @@
 const isDev = process.env.NODE_ENV === 'development';
-const API_URL = isDev ? 'http://localhost:3000/api' : '/api';
+const API_URL = isDev ? 'http://localhost:4000/api' : '/api';
 
 export const sendMessage = async (message) => {
   try {

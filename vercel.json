@@ -1,32 +1,29 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run vercel-build",
-  "outputDirectory": "frontend/web-build",
-  "routes": [
+  "builds": [
     {
-      "src": "/api/chat",
-      "dest": "backend/src/index.js"
+      "src": "backend/src/server.js",
+      "use": "@vercel/node"
     },
     {
-      "src": "/api/invite/validate",
-      "dest": "backend/src/index.js"
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "web-build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/src/server.js"
     },
     {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/frontend/web-build/$1"
     }
-  ],
-  "env": {
-    "REACT_APP_FIREBASE_API_KEY": "AIzaSyBsIDeZkvQjiK7OsZk1QePR_9anJ22JeBU",
-    "REACT_APP_FIREBASE_AUTH_DOMAIN": "test-c878c.firebaseapp.com",
-    "REACT_APP_FIREBASE_PROJECT_ID": "test-c878c",
-    "REACT_APP_FIREBASE_STORAGE_BUCKET": "test-c878c.firebasestorage.app",
-    "REACT_APP_FIREBASE_MESSAGING_SENDER_ID": "765271207012",
-    "REACT_APP_FIREBASE_APP_ID": "1:765271207012:web:adb86323b9b5a538ae8371",
-    "REACT_APP_FIREBASE_MEASUREMENT_ID": "G-5XW5JMRKH4",
-    "NODE_ENV": "production"
-  }
+  ]
 } 

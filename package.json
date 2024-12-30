@@ -6,8 +6,9 @@
     "vercel-build": "npm run build:backend && npm run build:frontend",
     "build:frontend": "cd frontend && npm install --legacy-peer-deps && npm run build",
     "build:backend": "cd backend && npm install",
-    "start": "cd backend && npm start",
-    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\"",
+    "dev:backend": "cd backend && PORT=4000 node src/server.js",
+    "dev:frontend": "cd frontend && npm run web",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "test": "npm run test:frontend && npm run test:backend",
     "test:frontend": "cd frontend && npm test",
     "test:backend": "cd backend && npm test",
@@ -16,10 +17,11 @@
     "lint:backend": "cd backend && npm run lint"
   },
   "devDependencies": {
-    "concurrently": "^8.0.0"
+    "concurrently": "^8.0.0",
+    "vercel": "^32.0.0"
   },
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=20.0.0",
     "npm": ">=8.0.0"
   }
 } 
