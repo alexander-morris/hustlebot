@@ -1,0 +1,9 @@
+{
+    "watch": ["src/**/*", "public/**/*"],
+    "ext": "js,jsx,ts,tsx,json,html,css",
+    "ignore": ["node_modules", "build", ".expo"],
+    "exec": "echo 'File change detected'",
+    "events": {
+        "restart": "touch ./src/App.js"
+    }
+}

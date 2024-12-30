@@ -1,0 +1,11 @@
+{
+  "ignore_dirs": [
+    "node_modules",
+    ".git",
+    "dist",
+    "build",
+    ".expo"
+  ],
+  "fsevents_latency": 0.05,
+  "fsevents_try_resync": true
+} 
