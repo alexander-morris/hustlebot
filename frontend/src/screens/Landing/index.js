@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { colors } from '../../utils/colors';
 import ChatUI from '../../components/Chat/ChatUI';
 import Navbar from '../../components/Navbar';
+import About from '../About';
 import { getUrlParams } from '../../utils/urlUtils';
 import { logUserResponse } from '../../services/analytics';
 
@@ -19,41 +20,6 @@ const DAILY_QUESTIONS_WITH_RESPONSES = [
   {
     question: "What's one small step you could take today towards your goals?",
     response: "Taking action is powerful, no matter how small! This step could create momentum for bigger changes. Would you like to explore more ways to build on this progress?"
-  },
-  {
-    question: "What's the biggest challenge you're facing right now?",
-    response: "Challenges often lead to our greatest growth. Let's break this down into smaller, manageable parts. Which aspect feels most urgent to address first?"
-  },
-  {
-    question: "If you could start any business today, what would it be?",
-    response: "That's an interesting business idea! Let's explore its potential. Have you thought about the target market and what unique value you could offer them?"
-  },
-  {
-    question: "What motivates you to keep pushing forward?",
-    response: "Understanding our motivations is key to staying focused. Let's explore how we can use this motivation to create sustainable progress. What specific aspects of this motivation drive you the most?"
-  },
-  {
-    question: "Where do you see yourself in 3 years?",
-    response: "Having a clear vision helps guide our actions today. Let's work backwards from this goal - what milestones would you need to hit along the way?"
-  },
-  {
-    question: "What's a skill you've always wanted to master?",
-    response: "That's a fascinating area to explore! Breaking down complex skills into manageable chunks makes learning more effective. What's the first aspect of this skill you'd like to tackle?"
-  }
-];
-
-const UPDATES = [
-  {
-    title: "New Feature",
-    message: "You can now share your progress with friends!"
-  },
-  {
-    title: "Weekly Tip",
-    message: "Try breaking down your big goals into smaller, manageable tasks."
-  },
-  {
-    title: "Community Update",
-    message: "Join our growing community of dreamers and achievers!"
   }
 ];
 
@@ -63,18 +29,11 @@ const spaceGrotesk = {
   fontDisplay: 'swap'
 };
 
-// Add font import to head
-if (typeof document !== 'undefined') {
-  const link = document.createElement('link');
-  link.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap';
-  link.rel = 'stylesheet';
-  document.head.appendChild(link);
-}
-
 export default function LandingPage() {
   const { ref, questions, refOffer, pwa, showChat: showChatParam } = getUrlParams();
   const [showChat, setShowChat] = useState(false);
   const [referralCode, setReferralCode] = useState('');
+  const [currentPage, setCurrentPage] = useState('home');
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [dailyQuestionData, setDailyQuestionData] = useState(null);
@@ -107,12 +66,6 @@ export default function LandingPage() {
         Math.floor(Math.random() * DAILY_QUESTIONS_WITH_RESPONSES.length)
       ];
       setDailyQuestionData(randomQuestionData);
-
-      // 30% chance to show an update
-      if (Math.random() < 0.3) {
-        const randomUpdate = UPDATES[Math.floor(Math.random() * UPDATES.length)];
-        setUpdate(randomUpdate);
-      }
     }
   }, [pwa]);
 
@@ -138,16 +91,23 @@ export default function LandingPage() {
   };
 
   const handleStartChat = () => {
-    // Temporarily bypass captcha
     setShowChat(true);
-    setCaptchaVerified(true);
+    setCurrentPage('chat');
   };
 
-  // If in PWA mode or already showing chat, render chat UI
-  if (pwa === 'true' || showChat) {
-    return (
-      <View style={styles.container}>
-        <Navbar onGetStarted={() => {}} />
+  const handleAboutClick = () => {
+    setCurrentPage('about');
+    setShowChat(false);
+  };
+
+  const renderContent = () => {
+    if (currentPage === 'about') {
+      return <About onGetStarted={handleStartChat} />;
+    }
+
+    // If in PWA mode or showing chat, render chat UI
+    if (pwa === 'true' || showChat) {
+      return (
         <View style={styles.content}>
           {update && (
             <View style={styles.updateBanner}>
@@ -164,100 +124,95 @@ export default function LandingPage() {
             onUserResponse={handleUserResponse}
           />
         </View>
+      );
+    }
+
+    // Otherwise show landing page content
+    return (
+      <View style={styles.content}>
+        <View style={styles.banner}>
+          <View style={styles.bannerContent}>
+            <Text style={styles.bannerTitle}>
+              Turn Your Dreams into Reality with AI
+            </Text>
+            <Text style={styles.bannerSubtitle}>
+              Join thousands of dreamers and doers who are using AI to discover their path
+            </Text>
+            <View style={styles.referralInput}>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter referral code"
+                placeholderTextColor={colors.text.tertiary}
+                value={referralCode}
+                onChangeText={setReferralCode}
+              />
+              <TouchableOpacity 
+                style={styles.tryNowButton}
+                onPress={handleStartChat}
+              >
+                <Text style={styles.tryNowButtonText}>Try Now</Text>
+              </TouchableOpacity>
+            </View>
+            {showInstallPrompt && (
+              <TouchableOpacity 
+                style={styles.installButton}
+                onPress={handleInstallClick}
+              >
+                <Text style={styles.installButtonText}>📱 Add to Home Screen</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
+        <View style={styles.infoSection}>
+          <View style={styles.infoContainer}>
+            <Text style={styles.sectionTitle}>What are HustleBots?</Text>
+            <Text style={styles.infoText}>
+              HustleBots are AI-powered companions designed to help you discover and pursue your passions. 
+              Through meaningful conversations and personalized guidance, they help you unlock your potential 
+              and connect with like-minded individuals who share your ambitions.
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.logosSection}>
+          <Text style={styles.logosSectionTitle}>Powered By</Text>
+          <View style={styles.logosGrid}>
+            <Text style={styles.logo}>OpenAI</Text>
+            <Text style={styles.logo}>Google Cloud</Text>
+            <Text style={styles.logo}>Firebase</Text>
+          </View>
+        </View>
+
+        <View style={styles.readMoreSection}>
+          <Text style={styles.readMoreTitle}>Want to Learn More?</Text>
+          <View style={styles.readMoreLinks}>
+            <TouchableOpacity 
+              style={styles.readMoreButton}
+              onPress={() => window.open('https://github.com/yourusername/hustlebot', '_blank')}
+            >
+              <Text style={styles.readMoreButtonText}>GitHub</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.readMoreButton}
+              onPress={() => window.open('/whitepaper.pdf', '_blank')}
+            >
+              <Text style={styles.readMoreButtonText}>Whitepaper</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     );
-  }
+  };
 
-  // Remove captcha verification UI for now
   return (
     <View style={styles.container}>
-      <Navbar onGetStarted={handleStartChat} />
-      <View style={styles.content}>
-        {showChat ? (
-          <ChatUI 
-            questionsBeforeLogin={questions} 
-            showRefOffer={refOffer}
-          />
-        ) : (
-          <>
-            {/* Banner Section */}
-            <View style={styles.banner}>
-              <View style={styles.bannerContent}>
-                <Text style={styles.bannerTitle}>
-                  Turn Your Dreams into Reality with AI
-                </Text>
-                <Text style={styles.bannerSubtitle}>
-                  Join thousands of dreamers and doers who are using AI to discover their path
-                </Text>
-                <View style={styles.referralInput}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter referral code"
-                    placeholderTextColor={colors.text.tertiary}
-                    value={referralCode}
-                    onChangeText={setReferralCode}
-                  />
-                  <TouchableOpacity 
-                    style={styles.tryNowButton}
-                    onPress={() => setShowChat(true)}
-                  >
-                    <Text style={styles.tryNowButtonText}>Try Now</Text>
-                  </TouchableOpacity>
-                </View>
-                {showInstallPrompt && (
-                  <TouchableOpacity 
-                    style={styles.installButton}
-                    onPress={handleInstallClick}
-                  >
-                    <Text style={styles.installButtonText}>📱 Add to Home Screen</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-
-            {/* Info Section */}
-            <View style={styles.infoSection}>
-              <View style={styles.infoContainer}>
-                <Text style={styles.sectionTitle}>What are HustleBots?</Text>
-                <Text style={styles.infoText}>
-                  HustleBots are AI-powered companions designed to help you discover and pursue your passions. 
-                  Through meaningful conversations and personalized guidance, they help you unlock your potential 
-                  and connect with like-minded individuals who share your ambitions.
-                </Text>
-              </View>
-            </View>
-
-            {/* Logos Section */}
-            <View style={styles.logosSection}>
-              <Text style={styles.logosSectionTitle}>Powered By</Text>
-              <View style={styles.logosGrid}>
-                <Text style={styles.logo}>OpenAI</Text>
-                <Text style={styles.logo}>Google Cloud</Text>
-                <Text style={styles.logo}>Firebase</Text>
-              </View>
-            </View>
-
-            {/* Read More Section */}
-            <View style={styles.readMoreSection}>
-              <Text style={styles.readMoreTitle}>Want to Learn More?</Text>
-              <View style={styles.readMoreLinks}>
-                <TouchableOpacity 
-                  style={styles.readMoreButton}
-                  onPress={() => window.open('https://github.com/yourusername/hustlebot', '_blank')}
-                >
-                  <Text style={styles.readMoreButtonText}>GitHub</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.readMoreButton}
-                  onPress={() => window.open('/whitepaper.pdf', '_blank')}
-                >
-                  <Text style={styles.readMoreButtonText}>Whitepaper</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        )}
-      </View>
+      <Navbar 
+        onGetStarted={handleStartChat} 
+        onAboutClick={handleAboutClick}
+        currentPage={currentPage}
+      />
+      {renderContent()}
     </View>
   );
 }
@@ -268,11 +223,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     minHeight: '100vh',
     width: '100%',
-    overflow: 'hidden' // Prevent horizontal scroll
+    overflow: 'hidden'
   },
   content: {
     flex: 1,
-    marginTop: 64, // Height of navbar
+    marginTop: 64,
     width: '100%',
     overflow: 'auto'
   },
@@ -588,29 +543,5 @@ const styles = StyleSheet.create({
     ...spaceGrotesk,
     fontSize: 16,
     color: colors.text.secondary
-  },
-  captchaContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: colors.background.primary
-  },
-  captchaTitle: {
-    ...spaceGrotesk,
-    fontSize: 24,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 24,
-    textAlign: 'center'
-  },
-  captchaWrapper: {
-    marginBottom: 16
-  },
-  verifyingText: {
-    ...spaceGrotesk,
-    fontSize: 16,
-    color: colors.text.secondary,
-    marginTop: 12
   }
 });

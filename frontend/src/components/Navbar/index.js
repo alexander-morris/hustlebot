@@ -8,7 +8,7 @@ const spaceGrotesk = {
   fontDisplay: 'swap'
 };
 
-export default function Navbar({ onGetStarted }) {
+export default function Navbar({ onGetStarted, onAboutClick, currentPage }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const windowWidth = Dimensions.get('window').width;
   const isMobile = windowWidth < 768;
@@ -16,6 +16,13 @@ export default function Navbar({ onGetStarted }) {
   const handleGetStarted = () => {
     if (onGetStarted) {
       onGetStarted();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleAboutClick = () => {
+    if (onAboutClick) {
+      onAboutClick();
     }
     setIsMenuOpen(false);
   };
@@ -48,6 +55,14 @@ export default function Navbar({ onGetStarted }) {
         isMobile && styles.mobileRightSection,
         isMobile && !isMenuOpen && styles.hiddenMobile
       ]}>
+        <TouchableOpacity 
+          style={[styles.navLink, currentPage === 'about' && styles.activeNavLink]}
+          onPress={handleAboutClick}
+        >
+          <Text style={[styles.navLinkText, currentPage === 'about' && styles.activeNavLinkText]}>
+            About
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.navLink, styles.primaryButton]}
           onPress={handleGetStarted}
@@ -126,6 +141,19 @@ const styles = StyleSheet.create({
       width: '100%',
       textAlign: 'center'
     }
+  },
+  navLinkText: {
+    ...spaceGrotesk,
+    color: colors.text.primary,
+    fontSize: 16,
+    fontWeight: '500'
+  },
+  activeNavLink: {
+    backgroundColor: colors.background.secondary
+  },
+  activeNavLinkText: {
+    color: colors.primary,
+    fontWeight: '600'
   },
   primaryButton: {
     backgroundColor: colors.primary,

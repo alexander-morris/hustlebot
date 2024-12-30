@@ -11,3 +11,5 @@ frontend/src/config/firebase.js
 frontend/.env
 backend/.env
 frontend/src/config/environment.js
+.vercel
+.env*.local
