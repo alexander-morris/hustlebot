@@ -1,5 +1,8 @@
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
+import { db } from '../config/firebase';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 export const generateReferralCode = async (userId) => {
   try {
@@ -55,4 +58,44 @@ export function generateUniqueCode() {
   }
   
   return code;
-} 
+}
+
+export const isValidReferralCode = async (code) => {
+  if (!code) return false;
+  
+  // Handle development mode test codes
+  if (isDev && (code === 'TEST123' || code === 'TEST1234')) {
+    console.log('Development mode: Accepting test code:', code);
+    return true;
+  }
+  
+  try {
+    const referralsRef = collection(db, 'referralCodes');
+    const q = query(referralsRef, where('code', '==', code));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      console.log('No matching referral code found');
+      return false;
+    }
+    
+    const referral = querySnapshot.docs[0].data();
+    const now = new Date();
+    
+    // Check if code is expired or used
+    if (referral.used || (referral.expiresAt && referral.expiresAt.toDate() < now)) {
+      console.log('Referral code is', referral.used ? 'used' : 'expired');
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error validating referral code:', error);
+    // In development mode, be more lenient with errors
+    if (isDev) {
+      console.warn('Development mode: Allowing code despite error');
+      return true;
+    }
+    throw error;
+  }
+}; 

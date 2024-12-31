@@ -6,7 +6,13 @@ import GoogleSignIn from '../Auth/GoogleSignIn';
 import { generateReferralCode, generateUniqueCode } from '../../utils/referralUtils';
 import { FALLBACK_QUESTIONS } from '../../utils/chatQuestions';
 
-export default function ChatUI({ questionsBeforeLogin, showRefOffer }) {
+export default function ChatUI({ 
+  questionsBeforeLogin = 5,
+  showRefOffer,
+  waitForAnswer,
+  onUserResponse,
+  welcomeMessage
+}) {
   console.log('ChatUI initialized with:', { questionsBeforeLogin, showRefOffer });
   const isDev = process.env.NODE_ENV === 'development';
   const [messages, setMessages] = useState([]);
@@ -112,7 +118,7 @@ export default function ChatUI({ questionsBeforeLogin, showRefOffer }) {
       console.log(`Showing login prompt after ${questionCount} questions`);
       setShowLoginPrompt(true);
     }
-  }, [questionCount, showLoginPrompt, user]);
+  }, [questionCount, showLoginPrompt, user, LOGIN_PROMPT_THRESHOLD]);
 
   useEffect(() => {
     // Check backend connection
@@ -131,6 +137,15 @@ export default function ChatUI({ questionsBeforeLogin, showRefOffer }) {
     const interval = setInterval(checkConnection, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Track question count in bot responses
+  const handleBotResponse = (botMessage) => {
+    if (botMessage.isQuestion) {
+      const newCount = questionCount + 1;
+      console.log('Incrementing question count:', newCount);
+      setQuestionCount(newCount);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -168,12 +183,8 @@ export default function ChatUI({ questionsBeforeLogin, showRefOffer }) {
       };
       
       setMessages(prev => [...prev, botMessage]);
+      handleBotResponse(botMessage);
       
-      // Increment question count if this was a question
-      if (botMessage.isQuestion) {
-        const newCount = questionCount + 1;
-        setQuestionCount(newCount);
-      }
     } catch (error) {
       console.error('Chat error:', error);
       const fallbackQuestion = getRandomFallbackQuestion();
@@ -231,12 +242,8 @@ export default function ChatUI({ questionsBeforeLogin, showRefOffer }) {
       };
       
       setMessages(prev => [...prev, botMessage]);
+      handleBotResponse(botMessage);
       
-      // Increment question count and check for login prompt
-      if (botMessage.isQuestion) {
-        const newCount = questionCount + 1;
-        setQuestionCount(newCount);
-      }
     } catch (error) {
       console.error('Quick response error:', error);
       // Handle specific error types with engaging fallback questions
@@ -790,19 +797,24 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   referralContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
     backgroundColor: colors.background.primary,
-    zIndex: 1001
+    padding: 32,
+    borderRadius: 16,
+    width: '90%',
+    maxWidth: 480,
+    margin: 'auto',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    border: `1px solid ${colors.background.tertiary}`,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 24
   },
   referralTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginBottom: 32,
     textAlign: 'center',
+    marginBottom: 8,
     textShadow: `0 0 10px ${colors.primary}40`
   },
   referralCodeBox: {
@@ -811,9 +823,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.info,
-    marginBottom: 24,
     width: '100%',
-    maxWidth: 400,
     boxShadow: `0 0 20px ${colors.primary}40`
   },
   referralCodeLabel: {
@@ -885,15 +895,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   modalOverlay: {
-    position: 'absolute',
+    position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000
+    zIndex: 1000,
+    padding: 16
   },
   confirmOverlay: {
     position: 'absolute',

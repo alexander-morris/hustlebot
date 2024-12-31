@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { colors } from '../../utils/colors';
 import ChatUI from '../../components/Chat/ChatUI';
 import Navbar from '../../components/Navbar';
 import { getUrlParams } from '../../utils/urlUtils';
 import { logUserResponse } from '../../services/analytics';
+import { isValidReferralCode } from '../../utils/referralUtils';
 
 const WELCOME_MESSAGE = {
   type: 'bot',
@@ -84,6 +85,8 @@ export default function LandingPage() {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [dailyQuestionData, setDailyQuestionData] = useState(null);
   const [update, setUpdate] = useState(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
     // Register service worker
@@ -142,10 +145,44 @@ export default function LandingPage() {
     });
   };
 
-  const handleStartChat = () => {
-    // Temporarily bypass captcha
-    setShowChat(true);
-    setCaptchaVerified(true);
+  const handleStartChat = async () => {
+    if (!referralCode) {
+      setValidationError('Please enter a referral code');
+      return;
+    }
+
+    setIsValidating(true);
+    setValidationError('');
+    
+    try {
+      const isValid = await isValidReferralCode(referralCode);
+      if (isValid) {
+        // Log successful validation
+        console.log('Valid referral code:', referralCode);
+        
+        // Store the referral code in session storage for persistence
+        sessionStorage.setItem('referralCode', referralCode);
+        
+        // Update URL with referral code
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('ref', referralCode);
+        window.history.pushState({}, '', newUrl);
+        
+        // Show chat interface
+        setShowChat(true);
+      } else {
+        setValidationError('Invalid referral code. Please check and try again.');
+      }
+    } catch (error) {
+      console.error('Error validating referral code:', error);
+      setValidationError(
+        process.env.NODE_ENV === 'development' 
+          ? `Error: ${error.message}`
+          : 'Error validating code. Please try again.'
+      );
+    } finally {
+      setIsValidating(false);
+    }
   };
 
   // If in PWA mode or already showing chat, render chat UI
@@ -161,11 +198,9 @@ export default function LandingPage() {
             </View>
           )}
           <ChatUI 
-            questionsBeforeLogin={DAILY_QUESTIONS_WITH_RESPONSES.map(q => q.question)}
-            initialResponses={DAILY_QUESTIONS_WITH_RESPONSES.map(q => q.response)}
+            questionsBeforeLogin={5}
             showRefOffer={refOffer}
             waitForAnswer={true}
-            questionsBeforeSignIn={5}
             onUserResponse={handleUserResponse}
             welcomeMessage={WELCOME_MESSAGE}
           />
@@ -181,8 +216,11 @@ export default function LandingPage() {
       <View style={styles.content}>
         {showChat ? (
           <ChatUI 
-            questionsBeforeLogin={questions} 
+            questionsBeforeLogin={5}
             showRefOffer={refOffer}
+            waitForAnswer={true}
+            onUserResponse={handleUserResponse}
+            welcomeMessage={WELCOME_MESSAGE}
           />
         ) : (
           <>
@@ -196,18 +234,44 @@ export default function LandingPage() {
                   Join thousands of dreamers and doers who are using AI to discover their path
                 </Text>
                 <View style={styles.referralInput}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter referral code"
-                    placeholderTextColor={colors.text.tertiary}
-                    value={referralCode}
-                    onChangeText={setReferralCode}
-                  />
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      style={[styles.input, validationError && styles.inputError]}
+                      placeholder="Enter referral code"
+                      placeholderTextColor={colors.text.tertiary}
+                      value={referralCode}
+                      onChangeText={(text) => {
+                        setReferralCode(text);
+                        setValidationError('');
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleStartChat();
+                        }
+                      }}
+                      editable={!isValidating}
+                    />
+                    {isValidating && (
+                      <View style={styles.loadingOverlay}>
+                        <ActivityIndicator size="small" color={colors.primary} />
+                      </View>
+                    )}
+                  </View>
+                  {validationError && (
+                    <Text style={styles.errorText}>{validationError}</Text>
+                  )}
                   <TouchableOpacity 
-                    style={styles.tryNowButton}
-                    onPress={() => setShowChat(true)}
+                    style={[
+                      styles.tryNowButton,
+                      isValidating && styles.tryNowButtonDisabled,
+                      !referralCode && styles.tryNowButtonDisabled
+                    ]}
+                    onPress={handleStartChat}
+                    disabled={isValidating || !referralCode}
                   >
-                    <Text style={styles.tryNowButtonText}>Try Now</Text>
+                    <Text style={styles.tryNowButtonText}>
+                      {isValidating ? 'Validating...' : 'Try Now'}
+                    </Text>
                   </TouchableOpacity>
                 </View>
                 {showInstallPrompt && (
@@ -618,5 +682,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text.secondary,
     marginTop: 12
-  }
+  },
+  inputError: {
+    borderColor: colors.error,
+  },
+  errorText: {
+    color: colors.error,
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: 'left',
+    width: '100%',
+  },
+  tryNowButtonDisabled: {
+    opacity: 0.7,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  inputContainer: {
+    position: 'relative',
+    width: '100%',
+  },
 });

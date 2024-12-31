@@ -1,13 +1,28 @@
-module.exports = {
+export default {
   name: 'HustleBot',
   slug: 'hustlebot',
   version: '1.0.0',
   orientation: 'portrait',
-  web: {
-    bundler: 'webpack',
-    favicon: false
+  icon: './assets/icon.png',
+  userInterfaceStyle: 'light',
+  splash: {
+    image: './assets/splash.png',
+    resizeMode: 'contain',
+    backgroundColor: '#ffffff'
   },
-  extra: {
-    isDev: process.env.NODE_ENV === 'development'
+  assetBundlePatterns: [
+    '**/*'
+  ],
+  ios: {
+    supportsTablet: true
+  },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundColor: '#ffffff'
+    }
+  },
+  web: {
+    favicon: './assets/favicon.png'
   }
 }; 

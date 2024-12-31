@@ -41,7 +41,7 @@ export default function GoogleSignIn({ onSignIn, onClose }) {
       <View style={styles.modal}>
         <Text style={styles.title}>Save Your Progress</Text>
         <Text style={styles.description}>
-          Sign in with Google to save your conversation history and continue your journey.
+          Sign in with Google to save your conversation history and unlock additional features.
         </Text>
         
         {error && (
@@ -87,33 +87,40 @@ const styles = StyleSheet.create({
     zIndex: 1000
   },
   modal: {
-    backgroundColor: colors.background.secondary,
-    padding: 24,
-    borderRadius: 12,
+    backgroundColor: colors.background.primary,
+    padding: 32,
+    borderRadius: 16,
     width: '90%',
     maxWidth: 400,
-    alignItems: 'center'
+    alignItems: 'center',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    border: `1px solid ${colors.background.tertiary}`
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginBottom: 16
+    marginBottom: 16,
+    textAlign: 'center'
   },
   description: {
     fontSize: 16,
     color: colors.text.secondary,
     textAlign: 'center',
-    marginBottom: 24
+    marginBottom: 24,
+    lineHeight: 24
   },
   googleButton: {
     backgroundColor: '#4285F4',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 6,
+    borderRadius: 8,
     width: '100%',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8
   },
   googleButtonText: {
     color: colors.text.inverse,
@@ -130,11 +137,13 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.error,
     marginBottom: 16,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 14
   },
   redirectText: {
     color: colors.text.secondary,
     marginBottom: 16,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 14
   }
 }); 

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { colors } from '../../utils/colors';
+import { auth, signInWithGoogle, signOut } from '../../services/auth';
 
 // Add Space Grotesk font
 const spaceGrotesk = {
@@ -8,14 +9,43 @@ const spaceGrotesk = {
   fontDisplay: 'swap'
 };
 
-export default function Navbar({ onGetStarted }) {
+export default function Navbar({ onGetStarted, onLogin }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const windowWidth = Dimensions.get('window').width;
   const isMobile = windowWidth < 768;
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsAuthenticated(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleGetStarted = () => {
     if (onGetStarted) {
       onGetStarted();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleLogin = async () => {
+    try {
+      await signInWithGoogle();
+      if (onLogin) {
+        onLogin();
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Logout failed:', error);
     }
     setIsMenuOpen(false);
   };
@@ -48,8 +78,23 @@ export default function Navbar({ onGetStarted }) {
         isMobile && styles.mobileRightSection,
         isMobile && !isMenuOpen && styles.hiddenMobile
       ]}>
+        {isAuthenticated ? (
+          <TouchableOpacity 
+            style={[styles.navLink, styles.authButton]}
+            onPress={handleLogout}
+          >
+            <Text style={styles.authButtonText}>Logout</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity 
+            style={[styles.navLink, styles.authButton]}
+            onPress={handleLogin}
+          >
+            <Text style={styles.authButtonText}>Login</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity 
-          style={[styles.navLink, styles.primaryButton]}
+          style={[styles.navLink, styles.primaryButton, styles.getStartedButton]}
           onPress={handleGetStarted}
         >
           <Text style={styles.primaryButtonText}>Get Started</Text>
@@ -73,10 +118,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 999,
-    '@media (max-width: 768px)': {
-      padding: 12
-    }
+    zIndex: 999
   },
   leftSection: {
     flexDirection: 'row',
@@ -90,18 +132,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: colors.primary,
-    letterSpacing: '-0.5px',
-    '@media (max-width: 768px)': {
-      fontSize: 20
-    }
+    letterSpacing: '-0.5px'
   },
   rightSection: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 24,
-    '@media (max-width: 768px)': {
-      gap: 16
-    }
+    alignItems: 'center'
   },
   mobileRightSection: {
     position: 'absolute',
@@ -112,8 +147,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.background.tertiary,
-    gap: 16
+    borderBottomColor: colors.background.tertiary
   },
   hiddenMobile: {
     display: 'none'
@@ -122,10 +156,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 6,
-    '@media (max-width: 768px)': {
-      width: '100%',
-      textAlign: 'center'
-    }
+    marginRight: 16
+  },
+  getStartedButton: {
+    marginRight: 0
   },
   primaryButton: {
     backgroundColor: colors.primary,
@@ -138,10 +172,7 @@ const styles = StyleSheet.create({
     color: colors.text.inverse,
     fontWeight: '600',
     fontSize: 16,
-    letterSpacing: '-0.2px',
-    '@media (max-width: 768px)': {
-      fontSize: 14
-    }
+    letterSpacing: '-0.2px'
   },
   menuButton: {
     padding: 8
@@ -150,5 +181,20 @@ const styles = StyleSheet.create({
     ...spaceGrotesk,
     color: colors.text.primary,
     fontSize: 24
+  },
+  authButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16
+  },
+  authButtonText: {
+    ...spaceGrotesk,
+    color: colors.primary,
+    fontWeight: '600',
+    fontSize: 16,
+    letterSpacing: '-0.2px'
   }
 }); 
